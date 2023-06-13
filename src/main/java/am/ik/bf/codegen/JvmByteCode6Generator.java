@@ -33,39 +33,39 @@ public class JvmByteCode6Generator implements CodeGenerator {
 
 	private final Utf8Constant helloWorldUtf8 = constantPool.addUtf8("HelloWorld");
 
-	private final ClassConstant helloWorldClass = constantPool.addClass(helloWorldUtf8);
-
 	private final Utf8Constant javaLangObjectUtf8 = constantPool.addUtf8("java/lang/Object");
-
-	private final ClassConstant javaLangObjectClass = constantPool.addClass(javaLangObjectUtf8);
 
 	private final Utf8Constant javaLangSystemUtf8 = constantPool.addUtf8("java/lang/System");
 
-	private final ClassConstant javaLangSystemClass = constantPool.addClass(javaLangSystemUtf8);
-
 	private final Utf8Constant javaLangPrintStreamUtf8 = constantPool.addUtf8("java/io/PrintStream");
-
-	private final ClassConstant javaLangPrintStreamClass = constantPool.addClass(javaLangPrintStreamUtf8);
 
 	private final Utf8Constant outUtf8 = constantPool.addUtf8("out");
 
+	private final Utf8Constant printUtf8 = constantPool.addUtf8("print");
+
 	private final Utf8Constant javaLangPrintStreamType = constantPool.addUtf8("Ljava/io/PrintStream;");
 
-	private final NameAndTypeConstant systemOutField = constantPool.addNameAndType(outUtf8, javaLangPrintStreamType);
+	private final Utf8Constant javaLangStringArrayType = constantPool.addUtf8("([Ljava/lang/String;)V");
 
-	private final FieldrefConstant systemOutFieldRef = constantPool.addFieldref(javaLangSystemClass, systemOutField);
+	private final Utf8Constant charType = constantPool.addUtf8("(C)V");
 
 	private final Utf8Constant codeUtf8 = constantPool.addUtf8("Code");
 
 	private final Utf8Constant mainUtf8 = constantPool.addUtf8("main");
 
-	private final Utf8Constant javaLangStringArrayType = constantPool.addUtf8("([Ljava/lang/String;)V");
+	private final ClassConstant helloWorldClass = constantPool.addClass(helloWorldUtf8);
 
-	private final Utf8Constant printUtf8 = constantPool.addUtf8("print");
+	private final ClassConstant javaLangObjectClass = constantPool.addClass(javaLangObjectUtf8);
 
-	private final Utf8Constant charType = constantPool.addUtf8("(C)V");
+	private final ClassConstant javaLangSystemClass = constantPool.addClass(javaLangSystemUtf8);
+
+	private final ClassConstant javaLangPrintStreamClass = constantPool.addClass(javaLangPrintStreamUtf8);
+
+	private final NameAndTypeConstant systemOutField = constantPool.addNameAndType(outUtf8, javaLangPrintStreamType);
 
 	private final NameAndTypeConstant printMethod = constantPool.addNameAndType(printUtf8, charType);
+
+	private final FieldrefConstant systemOutFieldRef = constantPool.addFieldref(javaLangSystemClass, systemOutField);
 
 	private final MethodrefConstant printMethodRef = constantPool.addMethodref(javaLangPrintStreamClass, printMethod);
 

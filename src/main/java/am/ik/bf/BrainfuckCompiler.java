@@ -47,11 +47,11 @@ public class BrainfuckCompiler {
 		compileToJava(code, System.out);
 	}
 
-	public static void compileToJvmByteCode(String code) {
-		compileToJvmByteCode(code, System.out);
+	public static void compileToJvmByteCode6(String code) {
+		compileToJvmByteCode6(code, System.out);
 	}
 
-	public static void compileToJvmByteCode(String code, OutputStream out) {
+	public static void compileToJvmByteCode6(String code, OutputStream out) {
 		final BrainfuckCompiler compiler = new BrainfuckCompiler(new JvmByteCode6Generator(out));
 		compiler.compile(code);
 	}
@@ -66,7 +66,7 @@ public class BrainfuckCompiler {
 		// BrainfuckCompiler.compileToJavaScript("++.", System.out);
 		// BrainfuckCompiler.compileToJava("++.", System.out);
 		// String code = "++[--]";
-		BrainfuckCompiler.compileToJvmByteCode(code, Files.newOutputStream(Path.of("target/HelloWorld.class")));
+		BrainfuckCompiler.compileToJvmByteCode6(code, Files.newOutputStream(Path.of("target/HelloWorld.class")));
 		// BrainfuckCompiler.compileToJava(code);
 	}
 
