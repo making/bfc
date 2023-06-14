@@ -120,7 +120,9 @@ public class JvmByteCode6Generator implements CodeGenerator {
 		final int indexToReplace = this.code.size() - 2;
 		final int beforeSize = this.code.size();
 		statement.statements().forEach(s -> s.generate(this));
-		final int indexIfeq = this.code.size() - beforeSize + 6;
+		final int codeLen = this.code.size() - beforeSize;
+		// ifeq + branchbyte1 + branchbyte2 + goto + branchbyte1 + branchbyte2 = 6
+		final int indexIfeq = codeLen + 6;
 		final byte[] ifeq = toU2(indexIfeq);
 		for (int i = 0; i < ifeq.length; i++) {
 			this.code.set(indexToReplace + i, (int) ifeq[i]);
