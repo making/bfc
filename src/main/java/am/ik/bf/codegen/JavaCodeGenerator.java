@@ -25,53 +25,53 @@ public class JavaCodeGenerator implements CodeGenerator {
 		this.out.printf("""
 				public class %s {
 
-				  public static void main(String[] args) {
-					final int[] memory = new int[1024];
-					int pointer = 0;
+					public static void main(String[] args) {
+						final int[] memory = new int[1024];
+						int pointer = 0;
 				""", this.className);
 	}
 
 	@Override
 	public void end() {
 		this.out.print("""
-				  }
+					}
 				}
 				""");
 	}
 
 	@Override
 	public void generateLoopStatement(LoopStatement statement) {
-		this.out.println("  while (memory[pointer] != 0) {");
+		this.out.println("	while (memory[pointer] != 0) {");
 		statement.statements().forEach(s -> s.generate(this));
 		this.out.println();
-		this.out.println("  }");
+		this.out.println("	}");
 	}
 
 	@Override
 	public void generateOutputStatement(OutputStatement statement) {
 		this.out.print("""
-				    System.out.print((char) memory[pointer]);
+						System.out.print((char) memory[pointer]);
 				""");
 	}
 
 	@Override
 	public void generateInputStatement(InputStatement statement) {
 		this.out.print("""
-				    /* TODO */
+						/* TODO */
 				""");
 	}
 
 	@Override
 	public void generateIncrementValueExpression(IncrementValueExpression expression) {
 		this.out.printf("""
-				    memory[pointer] += %d;
+						memory[pointer] += %d;
 				""", expression.value());
 	}
 
 	@Override
 	public void generateIncrementPointerExpression(IncrementPointerExpression expression) {
 		this.out.printf("""
-				    pointer += %d;
+						pointer += %d;
 				""", expression.value());
 	}
 
