@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.function.IntConsumer;
 
 import am.ik.bf.BrainfuckCompiler;
+import am.ik.bf.BrainfuckInterpreter;
 import am.ik.bf.codegen.CodeGenerator;
 import am.ik.bf.codegen.JavaCodeGenerator;
 import am.ik.bf.codegen.JavaScriptCodeGenerator;
@@ -48,22 +49,33 @@ public class BfcCli {
 		final Path input = this.options.get("-i")
 			.map(Path::of)
 			.orElseThrow(() -> new IllegalArgumentException("the required option '-i' is missing."));
-		final Path output = this.options.get("-o")
-			.map(Path::of)
-			.orElseThrow(() -> new IllegalArgumentException("the required option '-o' is missing."));
 		try {
 			final String code = Files.readString(input).trim();
-			final CodeGenerator codeGenerator = this.determineCodeGenerator(output);
-			this.compile(codeGenerator, code);
+
+			if (this.options.contains("-o")) {
+				this.compile(code);
+			}
+			else {
+				this.interpret(code);
+			}
 		}
 		catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
 	}
 
-	private void compile(CodeGenerator codeGenerator, String code) {
+	private void compile(String code) throws IOException {
+		final Path output = this.options.get("-o")
+			.map(Path::of)
+			.orElseThrow(() -> new IllegalArgumentException("the required option '-o' is missing."));
+		final CodeGenerator codeGenerator = this.determineCodeGenerator(output);
 		final BrainfuckCompiler compiler = new BrainfuckCompiler(codeGenerator);
 		compiler.compile(code);
+	}
+
+	private void interpret(String code) {
+		final BrainfuckInterpreter interpreter = new BrainfuckInterpreter(System.in, System.out);
+		interpreter.interpret(code);
 	}
 
 	private CodeGenerator determineCodeGenerator(Path output) throws IOException {
