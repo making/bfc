@@ -35,17 +35,27 @@ public class JvmByteCode6Generator implements CodeGenerator {
 
 	private final Utf8Constant javaLangSystemUtf8 = constantPool.addUtf8("java/lang/System");
 
-	private final Utf8Constant javaLangPrintStreamUtf8 = constantPool.addUtf8("java/io/PrintStream");
+	private final Utf8Constant javaIoPrintStreamUtf8 = constantPool.addUtf8("java/io/PrintStream");
+
+	private final Utf8Constant javaIoInputStreamUtf8 = constantPool.addUtf8("java/io/InputStream");
 
 	private final Utf8Constant outUtf8 = constantPool.addUtf8("out");
 
+	private final Utf8Constant inUtf8 = constantPool.addUtf8("in");
+
 	private final Utf8Constant printUtf8 = constantPool.addUtf8("print");
 
-	private final Utf8Constant javaLangPrintStreamType = constantPool.addUtf8("Ljava/io/PrintStream;");
+	private final Utf8Constant readUtf8 = constantPool.addUtf8("read");
+
+	private final Utf8Constant javaIoPrintStreamType = constantPool.addUtf8("Ljava/io/PrintStream;");
+
+	private final Utf8Constant javaIoInputStreamType = constantPool.addUtf8("Ljava/io/InputStream;");
 
 	private final Utf8Constant javaLangStringArrayType = constantPool.addUtf8("([Ljava/lang/String;)V");
 
-	private final Utf8Constant charType = constantPool.addUtf8("(C)V");
+	private final Utf8Constant charVoidType = constantPool.addUtf8("(C)V");
+
+	private final Utf8Constant voidIntType = constantPool.addUtf8("()I");
 
 	private final Utf8Constant codeUtf8 = constantPool.addUtf8("Code");
 
@@ -57,15 +67,25 @@ public class JvmByteCode6Generator implements CodeGenerator {
 
 	private final ClassConstant javaLangSystemClass = constantPool.addClass(javaLangSystemUtf8);
 
-	private final ClassConstant javaLangPrintStreamClass = constantPool.addClass(javaLangPrintStreamUtf8);
+	private final ClassConstant javaIoPrintStreamClass = constantPool.addClass(javaIoPrintStreamUtf8);
 
-	private final NameAndTypeConstant systemOutField = constantPool.addNameAndType(outUtf8, javaLangPrintStreamType);
+	private final ClassConstant javaIoInputStreamClass = constantPool.addClass(javaIoInputStreamUtf8);
 
-	private final NameAndTypeConstant printMethod = constantPool.addNameAndType(printUtf8, charType);
+	private final NameAndTypeConstant systemOutField = constantPool.addNameAndType(outUtf8, javaIoPrintStreamType);
+
+	private final NameAndTypeConstant systemInField = constantPool.addNameAndType(inUtf8, javaIoInputStreamType);
+
+	private final NameAndTypeConstant printMethod = constantPool.addNameAndType(printUtf8, charVoidType);
+
+	private final NameAndTypeConstant readMethod = constantPool.addNameAndType(readUtf8, voidIntType);
 
 	private final FieldrefConstant systemOutFieldRef = constantPool.addFieldref(javaLangSystemClass, systemOutField);
 
-	private final MethodrefConstant printMethodRef = constantPool.addMethodref(javaLangPrintStreamClass, printMethod);
+	private final FieldrefConstant systemInFieldRef = constantPool.addFieldref(javaLangSystemClass, systemInField);
+
+	private final MethodrefConstant printMethodRef = constantPool.addMethodref(javaIoPrintStreamClass, printMethod);
+
+	private final MethodrefConstant readMethodRef = constantPool.addMethodref(javaIoInputStreamClass, readMethod);
 
 	public JvmByteCode6Generator(String className, OutputStream out) {
 		this.out = out;
@@ -134,7 +154,7 @@ public class JvmByteCode6Generator implements CodeGenerator {
 	@Override
 	public void generateOutputStatement(OutputStatement statement) {
 		this.code.add(Opcode.GETSTATIC);
-		this.writeBytes(systemOutFieldRef.indexAsU2() /* out */);
+		this.writeBytes(systemOutFieldRef.indexAsU2() /* System.out */);
 		this.code.addAll(List.of( //
 				Opcode.ALOAD_1, // memory
 				Opcode.ILOAD_2, // pointer
@@ -146,6 +166,14 @@ public class JvmByteCode6Generator implements CodeGenerator {
 
 	@Override
 	public void generateInputStatement(InputStatement statement) {
+		this.code.addAll(List.of( //
+				Opcode.ALOAD_1, // memory
+				Opcode.ILOAD_2, // pointer,
+				Opcode.GETSTATIC));
+		this.writeBytes(systemInFieldRef.indexAsU2() /* System.in */);
+		this.code.add(Opcode.INVOKEVIRTUAL);
+		this.writeBytes(readMethodRef.indexAsU2() /* read */);
+		this.code.add(Opcode.IASTORE);
 	}
 
 	@Override

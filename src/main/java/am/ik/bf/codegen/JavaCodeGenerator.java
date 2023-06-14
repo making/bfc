@@ -57,7 +57,12 @@ public class JavaCodeGenerator implements CodeGenerator {
 	@Override
 	public void generateInputStatement(InputStatement statement) {
 		this.out.print("""
-						/* TODO */
+						try {
+							memory[pointer] = System.in.read();
+						}
+						catch (java.io.IOException e) {
+							throw new java.io.UncheckedIOException(e);
+						}
 				""");
 	}
 
