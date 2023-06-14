@@ -14,6 +14,6 @@ public record ExpressionStatement(List<Expression> expressions) implements State
 
 	@Override
 	public void generate(CodeGenerator codeGenerator) {
-		codeGenerator.exportExpressionStatement(this);
+		codeGenerator.generateExpressionStatement(this);
 	}
 }

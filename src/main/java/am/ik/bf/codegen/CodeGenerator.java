@@ -23,7 +23,7 @@ public interface CodeGenerator {
 
 	void generateIncrementPointerExpression(IncrementPointerExpression expression);
 
-	default void exportExpressionStatement(ExpressionStatement statement) {
+	default void generateExpressionStatement(ExpressionStatement statement) {
 		statement.expressions().forEach(expression -> expression.generate(this));
 	}
 
