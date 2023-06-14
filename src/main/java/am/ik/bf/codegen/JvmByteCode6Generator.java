@@ -24,15 +24,11 @@ public class JvmByteCode6Generator implements CodeGenerator {
 
 	private final OutputStream out;
 
-	private ByteCodeWriter byteCodeWriter;
-
 	private final List<Integer> code = new ArrayList<>();
 
 	private final ConstantPool constantPool = new ConstantPool();
 
 	private final ClassConstant targetClass;
-
-	private final ClassConstant javaLangObjectClass = constantPool.addClass(constantPool.addUtf8("java/lang/Object"));
 
 	private final ClassConstant javaLangSystemClass = constantPool.addClass(constantPool.addUtf8("java/lang/System"));
 
@@ -50,12 +46,6 @@ public class JvmByteCode6Generator implements CodeGenerator {
 			constantPool.addClass(constantPool.addUtf8("java/io/InputStream")),
 			constantPool.addNameAndType(constantPool.addUtf8("read"), constantPool.addUtf8("()I")));
 
-	private final Utf8Constant mainUt8 = constantPool.addUtf8("main");
-
-	private final Utf8Constant javaLangStringArrayType = constantPool.addUtf8("([Ljava/lang/String;)V");
-
-	private final Utf8Constant codeUtf8 = constantPool.addUtf8("Code");
-
 	public JvmByteCode6Generator(String className, OutputStream out) {
 		this.out = out;
 		this.targetClass = constantPool.addClass(constantPool.addUtf8(className));
@@ -63,15 +53,6 @@ public class JvmByteCode6Generator implements CodeGenerator {
 
 	@Override
 	public void begin() {
-		this.byteCodeWriter = new ByteCodeWriter(this.out) //
-			.write(0xca, 0xfe, 0xba, 0xbe) // cafebabe
-			.writeVersion(0, 50) // Java 6
-			.writeConstantPool(constantPool) //
-			.writeClass(AccessFlag.ACC_PUBLIC, targetClass, javaLangObjectClass) //
-			.writeInterfaces(interfaces -> {
-			})
-			.writeFields(fields -> {
-			});
 		this.code.addAll(List.of( //
 				Opcode.SIPUSH, 0x04, 0x00, /* 1024 */ //
 				Opcode.NEWARRAY, ArrayType.T_INT, Opcode.ASTORE_1, // memory
@@ -82,7 +63,21 @@ public class JvmByteCode6Generator implements CodeGenerator {
 	@Override
 	public void end() {
 		this.code.add(Opcode.RETURN);
-		this.byteCodeWriter //
+
+		final ClassConstant javaLangObjectClass = constantPool.addClass(constantPool.addUtf8("java/lang/Object"));
+		final Utf8Constant mainUt8 = constantPool.addUtf8("main");
+		final Utf8Constant javaLangStringArrayType = constantPool.addUtf8("([Ljava/lang/String;)V");
+		final Utf8Constant codeUtf8 = constantPool.addUtf8("Code");
+
+		new ByteCodeWriter(this.out) //
+			.write(0xca, 0xfe, 0xba, 0xbe) // cafebabe
+			.writeVersion(0, 50) // Java 6
+			.writeConstantPool(constantPool) //
+			.writeClass(AccessFlag.ACC_PUBLIC, targetClass, javaLangObjectClass) //
+			.writeInterfaces(interfaces -> {
+			})
+			.writeFields(fields -> {
+			})
 			.writeMethods(methods -> methods.add(AccessFlag.ACC_PUBLIC + AccessFlag.ACC_STATIC, mainUt8,
 					javaLangStringArrayType,
 					method -> method.writeAttributes(attributes -> attributes.add(codeUtf8,
