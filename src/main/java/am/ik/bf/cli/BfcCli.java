@@ -46,13 +46,13 @@ public class BfcCli {
 			this.help();
 			return;
 		}
-		if (!this.options.contains("-i")) {
-			this.err.println("the required option '-i' is missing.");
+		if (!this.options.containsNoKey()) {
+			this.err.println("the input file is missing.");
 			this.help();
 			this.exiter.accept(1);
 			return;
 		}
-		final Path input = Path.of(this.options.get("-i"));
+		final Path input = Path.of(this.options.getNokey());
 		try {
 			final String code = Files.readString(input).trim();
 
@@ -100,11 +100,10 @@ public class BfcCli {
 		this.err.println("""
 				Braininf*ck Compiler/Interpreter
 
-				bfc -i <input file> [options]
+				bfc <input file> [options]
 
 				---
 				Options:
-				-i:		input bf file name (required)
 				-o:		output file name of the compilation (supported extensions: *.js, *.java, *.class).
 						without this option bfc works as an interpreter.
 				-v, --version:	print version

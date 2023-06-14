@@ -13,6 +13,8 @@ public class CliOptions {
 
 	private final Map<String, String> options;
 
+	private static final String NOKEY = "__";
+
 	public CliOptions(Map<String, String> options) {
 		this.options = Collections.unmodifiableMap(options);
 	}
@@ -29,18 +31,28 @@ public class CliOptions {
 		return this.options.containsKey(key);
 	}
 
+	public String getNokey() {
+		return this.get(NOKEY);
+	}
+
+	public boolean containsNoKey() {
+		return this.contains(NOKEY);
+	}
+
 	public static CliOptions build(String[] args) {
 		final Map<String, String> options = new LinkedHashMap<>();
 		String key = null;
 		for (String arg : args) {
 			if (key == null) {
 				if (!arg.startsWith("-")) {
-					throw new IllegalArgumentException("The key '%s' is invalid.".formatted(arg));
+					options.put(NOKEY, arg);
 				}
-				key = arg;
-				if (noValueKeys.contains(key)) {
-					options.put(key, "");
-					key = null;
+				else {
+					key = arg;
+					if (noValueKeys.contains(key)) {
+						options.put(key, "");
+						key = null;
+					}
 				}
 			}
 			else {
