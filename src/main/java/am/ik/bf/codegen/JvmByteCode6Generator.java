@@ -23,8 +23,6 @@ import am.ik.jvm.Opcode;
 
 public class JvmByteCode6Generator implements CodeGenerator {
 
-	private final String className;
-
 	private final OutputStream out;
 
 	private ByteCodeWriter byteCodeWriter;
@@ -32,8 +30,6 @@ public class JvmByteCode6Generator implements CodeGenerator {
 	private final List<Integer> code = new ArrayList<>();
 
 	private final ConstantPool constantPool = new ConstantPool();
-
-	private final Utf8Constant targetClassUtf8;
 
 	private final Utf8Constant javaLangObjectUtf8 = constantPool.addUtf8("java/lang/Object");
 
@@ -72,10 +68,8 @@ public class JvmByteCode6Generator implements CodeGenerator {
 	private final MethodrefConstant printMethodRef = constantPool.addMethodref(javaLangPrintStreamClass, printMethod);
 
 	public JvmByteCode6Generator(String className, OutputStream out) {
-		this.className = className;
 		this.out = out;
-		this.targetClassUtf8 = constantPool.addUtf8(className);
-		this.targetClass = constantPool.addClass(targetClassUtf8);
+		this.targetClass = constantPool.addClass(constantPool.addUtf8(className));
 	}
 
 	@Override

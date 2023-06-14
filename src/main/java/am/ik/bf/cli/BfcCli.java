@@ -107,20 +107,6 @@ public class BfcCli {
 			System.err.println(e.getMessage());
 			cli.help();
 		}
-
-		// String code =
-		// "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.";
-		// BrainfuckCompiler.compileToJava(code,
-		// Files.newOutputStream(Path.of("target/Bf.java")));
-		// BrainfuckCompiler.compileToJavaScript(code,
-		// Files.newOutputStream(Path.of("target/bf.js")));
-
-		// BrainfuckCompiler.compileToJavaScript("++.", System.out);
-		// BrainfuckCompiler.compileToJava("++.", System.out);
-		// String code = "++[--]";
-		// BrainfuckCompiler.compileToJvmByteCode6(code,
-		// Files.newOutputStream(Path.of("target/HelloWorld.class")));
-		// BrainfuckCompiler.compileToJava(code);
 	}
 
 }
