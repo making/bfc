@@ -23,6 +23,8 @@ import am.ik.jvm.Opcode;
 
 public class JvmByteCode6Generator implements CodeGenerator {
 
+	private final String className;
+
 	private final OutputStream out;
 
 	private ByteCodeWriter byteCodeWriter;
@@ -31,7 +33,7 @@ public class JvmByteCode6Generator implements CodeGenerator {
 
 	private final ConstantPool constantPool = new ConstantPool();
 
-	private final Utf8Constant helloWorldUtf8 = constantPool.addUtf8("HelloWorld");
+	private final Utf8Constant targetClassUtf8;
 
 	private final Utf8Constant javaLangObjectUtf8 = constantPool.addUtf8("java/lang/Object");
 
@@ -53,7 +55,7 @@ public class JvmByteCode6Generator implements CodeGenerator {
 
 	private final Utf8Constant mainUtf8 = constantPool.addUtf8("main");
 
-	private final ClassConstant helloWorldClass = constantPool.addClass(helloWorldUtf8);
+	private final ClassConstant targetClass;
 
 	private final ClassConstant javaLangObjectClass = constantPool.addClass(javaLangObjectUtf8);
 
@@ -69,8 +71,11 @@ public class JvmByteCode6Generator implements CodeGenerator {
 
 	private final MethodrefConstant printMethodRef = constantPool.addMethodref(javaLangPrintStreamClass, printMethod);
 
-	public JvmByteCode6Generator(OutputStream out) {
+	public JvmByteCode6Generator(String className, OutputStream out) {
+		this.className = className;
 		this.out = out;
+		this.targetClassUtf8 = constantPool.addUtf8(className);
+		this.targetClass = constantPool.addClass(targetClassUtf8);
 	}
 
 	@Override
@@ -79,7 +84,7 @@ public class JvmByteCode6Generator implements CodeGenerator {
 			.write(0xca, 0xfe, 0xba, 0xbe) // cafebabe
 			.writeVersion(0, 50) // Java 6
 			.writeConstantPool(constantPool) //
-			.writeClass(AccessFlag.ACC_PUBLIC, helloWorldClass, javaLangObjectClass) //
+			.writeClass(AccessFlag.ACC_PUBLIC, targetClass, javaLangObjectClass) //
 			.writeInterfaces(interfaces -> {
 			})
 			.writeFields(fields -> {

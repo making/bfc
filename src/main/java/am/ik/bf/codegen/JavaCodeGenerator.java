@@ -11,21 +11,24 @@ import am.ik.bf.statement.OutputStatement;
 
 public class JavaCodeGenerator implements CodeGenerator {
 
+	private final String className;
+
 	private final PrintStream out;
 
-	public JavaCodeGenerator(OutputStream out) {
+	public JavaCodeGenerator(String className, OutputStream out) {
+		this.className = className;
 		this.out = new PrintStream(out);
 	}
 
 	@Override
 	public void begin() {
-		this.out.print("""
-				public class Bf {
+		this.out.printf("""
+				public class %s {
 
 				  public static void main(String[] args) {
-				    final int[] memory = new int[1024];
-				    int pointer = 0;
-				""");
+					final int[] memory = new int[1024];
+					int pointer = 0;
+				""", this.className);
 	}
 
 	@Override

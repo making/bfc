@@ -45,7 +45,7 @@ public class JavaScriptCodeGenerator implements CodeGenerator {
 	@Override
 	public void generateOutputStatement(OutputStatement statement) {
 		this.out.print("""
-				  process.stdout.write(void.fromCharCode(memory[pointer]));
+				  process.stdout.write(String.fromCharCode(memory[pointer]));
 				""");
 	}
 
