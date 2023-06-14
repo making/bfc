@@ -46,9 +46,13 @@ public class BfcCli {
 			this.help();
 			return;
 		}
-		final Path input = this.options.get("-i")
-			.map(Path::of)
-			.orElseThrow(() -> new IllegalArgumentException("the required option '-i' is missing."));
+		if (!this.options.contains("-i")) {
+			this.err.println("the required option '-i' is missing.");
+			this.help();
+			this.exiter.accept(1);
+			return;
+		}
+		final Path input = Path.of(this.options.get("-i"));
 		try {
 			final String code = Files.readString(input).trim();
 
@@ -65,7 +69,7 @@ public class BfcCli {
 	}
 
 	private void compile(String code) throws IOException {
-		final Path output = this.options.get("-o").map(Path::of).get();
+		final Path output = Path.of(this.options.get("-o"));
 		final CodeGenerator codeGenerator = this.determineCodeGenerator(output);
 		final BrainfuckCompiler compiler = new BrainfuckCompiler(codeGenerator);
 		compiler.compile(code);

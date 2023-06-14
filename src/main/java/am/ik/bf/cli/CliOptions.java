@@ -3,7 +3,6 @@ package am.ik.bf.cli;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 public class CliOptions {
@@ -22,8 +21,8 @@ public class CliOptions {
 		return this.options.isEmpty();
 	}
 
-	public Optional<String> get(String key) {
-		return Optional.ofNullable(this.options.get(key));
+	public String get(String key) {
+		return this.options.get(key);
 	}
 
 	public boolean contains(String key) {
