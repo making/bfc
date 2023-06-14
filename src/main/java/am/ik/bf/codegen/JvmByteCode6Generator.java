@@ -17,7 +17,6 @@ import am.ik.jvm.ConstantPool;
 import am.ik.jvm.ConstantPool.ClassConstant;
 import am.ik.jvm.ConstantPool.FieldrefConstant;
 import am.ik.jvm.ConstantPool.MethodrefConstant;
-import am.ik.jvm.ConstantPool.NameAndTypeConstant;
 import am.ik.jvm.ConstantPool.Utf8Constant;
 import am.ik.jvm.Opcode;
 
@@ -31,61 +30,31 @@ public class JvmByteCode6Generator implements CodeGenerator {
 
 	private final ConstantPool constantPool = new ConstantPool();
 
-	private final Utf8Constant javaLangObjectUtf8 = constantPool.addUtf8("java/lang/Object");
+	private final ClassConstant targetClass;
 
-	private final Utf8Constant javaLangSystemUtf8 = constantPool.addUtf8("java/lang/System");
+	private final ClassConstant javaLangObjectClass = constantPool.addClass(constantPool.addUtf8("java/lang/Object"));
 
-	private final Utf8Constant javaIoPrintStreamUtf8 = constantPool.addUtf8("java/io/PrintStream");
+	private final ClassConstant javaLangSystemClass = constantPool.addClass(constantPool.addUtf8("java/lang/System"));
 
-	private final Utf8Constant javaIoInputStreamUtf8 = constantPool.addUtf8("java/io/InputStream");
+	private final FieldrefConstant systemOutFieldRef = constantPool.addFieldref(javaLangSystemClass,
+			constantPool.addNameAndType(constantPool.addUtf8("out"), constantPool.addUtf8("Ljava/io/PrintStream;")));
 
-	private final Utf8Constant outUtf8 = constantPool.addUtf8("out");
+	private final FieldrefConstant systemInFieldRef = constantPool.addFieldref(javaLangSystemClass,
+			constantPool.addNameAndType(constantPool.addUtf8("in"), constantPool.addUtf8("Ljava/io/InputStream;")));
 
-	private final Utf8Constant inUtf8 = constantPool.addUtf8("in");
+	private final MethodrefConstant printMethodRef = constantPool.addMethodref(
+			constantPool.addClass(constantPool.addUtf8("java/io/PrintStream")),
+			constantPool.addNameAndType(constantPool.addUtf8("print"), constantPool.addUtf8("(C)V")));
 
-	private final Utf8Constant printUtf8 = constantPool.addUtf8("print");
+	private final MethodrefConstant readMethodRef = constantPool.addMethodref(
+			constantPool.addClass(constantPool.addUtf8("java/io/InputStream")),
+			constantPool.addNameAndType(constantPool.addUtf8("read"), constantPool.addUtf8("()I")));
 
-	private final Utf8Constant readUtf8 = constantPool.addUtf8("read");
-
-	private final Utf8Constant javaIoPrintStreamType = constantPool.addUtf8("Ljava/io/PrintStream;");
-
-	private final Utf8Constant javaIoInputStreamType = constantPool.addUtf8("Ljava/io/InputStream;");
+	private final Utf8Constant mainUt8 = constantPool.addUtf8("main");
 
 	private final Utf8Constant javaLangStringArrayType = constantPool.addUtf8("([Ljava/lang/String;)V");
 
-	private final Utf8Constant charVoidType = constantPool.addUtf8("(C)V");
-
-	private final Utf8Constant voidIntType = constantPool.addUtf8("()I");
-
 	private final Utf8Constant codeUtf8 = constantPool.addUtf8("Code");
-
-	private final Utf8Constant mainUtf8 = constantPool.addUtf8("main");
-
-	private final ClassConstant targetClass;
-
-	private final ClassConstant javaLangObjectClass = constantPool.addClass(javaLangObjectUtf8);
-
-	private final ClassConstant javaLangSystemClass = constantPool.addClass(javaLangSystemUtf8);
-
-	private final ClassConstant javaIoPrintStreamClass = constantPool.addClass(javaIoPrintStreamUtf8);
-
-	private final ClassConstant javaIoInputStreamClass = constantPool.addClass(javaIoInputStreamUtf8);
-
-	private final NameAndTypeConstant systemOutField = constantPool.addNameAndType(outUtf8, javaIoPrintStreamType);
-
-	private final NameAndTypeConstant systemInField = constantPool.addNameAndType(inUtf8, javaIoInputStreamType);
-
-	private final NameAndTypeConstant printMethod = constantPool.addNameAndType(printUtf8, charVoidType);
-
-	private final NameAndTypeConstant readMethod = constantPool.addNameAndType(readUtf8, voidIntType);
-
-	private final FieldrefConstant systemOutFieldRef = constantPool.addFieldref(javaLangSystemClass, systemOutField);
-
-	private final FieldrefConstant systemInFieldRef = constantPool.addFieldref(javaLangSystemClass, systemInField);
-
-	private final MethodrefConstant printMethodRef = constantPool.addMethodref(javaIoPrintStreamClass, printMethod);
-
-	private final MethodrefConstant readMethodRef = constantPool.addMethodref(javaIoInputStreamClass, readMethod);
 
 	public JvmByteCode6Generator(String className, OutputStream out) {
 		this.out = out;
@@ -114,9 +83,8 @@ public class JvmByteCode6Generator implements CodeGenerator {
 	public void end() {
 		this.code.add(Opcode.RETURN);
 		this.byteCodeWriter //
-			.writeMethods(methods -> methods.add(AccessFlag.ACC_PUBLIC + AccessFlag.ACC_STATIC,
-					mainUtf8 /* main */,
-					javaLangStringArrayType /* ([Ljava/lang/String;)V */,
+			.writeMethods(methods -> methods.add(AccessFlag.ACC_PUBLIC + AccessFlag.ACC_STATIC, mainUt8,
+					javaLangStringArrayType,
 					method -> method.writeAttributes(attributes -> attributes.add(codeUtf8,
 							attribute -> attribute.writeU2(4) // max_stack
 								.writeU2(3) // max_locals
