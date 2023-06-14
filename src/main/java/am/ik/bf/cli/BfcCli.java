@@ -65,9 +65,7 @@ public class BfcCli {
 	}
 
 	private void compile(String code) throws IOException {
-		final Path output = this.options.get("-o")
-			.map(Path::of)
-			.orElseThrow(() -> new IllegalArgumentException("the required option '-o' is missing."));
+		final Path output = this.options.get("-o").map(Path::of).get();
 		final CodeGenerator codeGenerator = this.determineCodeGenerator(output);
 		final BrainfuckCompiler compiler = new BrainfuckCompiler(codeGenerator);
 		compiler.compile(code);
@@ -96,14 +94,15 @@ public class BfcCli {
 
 	public void help() {
 		this.err.println("""
-				Braininf*ck Compiler
+				Braininf*ck Compiler/Interpreter
 
-				bfc -i <input file> -o <output file> [options]
+				bfc -i <input file> [options]
 
 				---
 				Options:
-				-i:		input bf file name
-				-o:		output file name (supported extensions: *.js, *.java, *.class)
+				-i:		input bf file name (required)
+				-o:		output file name of the compilation (supported extensions: *.js, *.java, *.class).
+						without this option bfc works as an interpreter.
 				-v, --version:	print version
 				-h, --help:	print this help
 				""");
