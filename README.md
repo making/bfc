@@ -21,7 +21,7 @@ bfc <input file> [options]
 
 ---
 Options:
--o:             output file name of the compilation (supported extensions: *.js, *.java, *.class).
+-o:             output file name of the compilation (supported extensions: *.js, *.java, *.class, *.wat).
                 without this option bfc works as an interpreter.
 -v, --version:  print version
 -h, --help:     print this help
@@ -41,7 +41,7 @@ bfc <input file> [options]
 
 ---
 Options:
--o:             output file name of the compilation (supported extensions: *.js, *.java, *.class).
+-o:             output file name of the compilation (supported extensions: *.js, *.java, *.class, *.wat).
                 without this option bfc works as an interpreter.
 -v, --version:  print version
 -h, --help:     print this help
@@ -62,6 +62,14 @@ Hello World
 ```
 $ bfc examples/hello.bf -o Hello.class
 $ java Hello
+Hello World
+```
+
+### Compiler to WAT
+
+```
+$ bfc examples/hello.bf -o hello.wat
+$ wasmtime hello.wat
 Hello World
 ```
 

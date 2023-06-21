@@ -14,6 +14,7 @@ import am.ik.bf.codegen.CodeGenerator;
 import am.ik.bf.codegen.JavaCodeGenerator;
 import am.ik.bf.codegen.JavaScriptCodeGenerator;
 import am.ik.bf.codegen.JvmByteCode6Generator;
+import am.ik.bf.codegen.WatCodeGenerator;
 
 public class BfcCli {
 
@@ -92,6 +93,7 @@ public class BfcCli {
 			case "java" -> new JavaCodeGenerator(className, stream);
 			case "js" -> new JavaScriptCodeGenerator(stream);
 			case "class" -> new JvmByteCode6Generator(className, stream);
+			case "wat" -> new WatCodeGenerator(stream);
 			default -> throw new IllegalArgumentException(ext + " is not supported extension.");
 		};
 	}
@@ -104,7 +106,7 @@ public class BfcCli {
 
 				---
 				Options:
-				-o:		output file name of the compilation (supported extensions: *.js, *.java, *.class).
+				-o:		output file name of the compilation (supported extensions: *.js, *.java, *.class, *.wat).
 						without this option bfc works as an interpreter.
 				-v, --version:	print version
 				-h, --help:	print this help

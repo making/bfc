@@ -1,7 +1,6 @@
 package am.ik.bf.codegen;
 
 import java.io.OutputStream;
-import java.io.PrintStream;
 
 import am.ik.bf.expression.IncrementPointerExpression;
 import am.ik.bf.expression.IncrementValueExpression;
@@ -9,15 +8,13 @@ import am.ik.bf.statement.InputStatement;
 import am.ik.bf.statement.LoopStatement;
 import am.ik.bf.statement.OutputStatement;
 
-public class JavaCodeGenerator implements CodeGenerator {
+public class JavaCodeGenerator extends PrintStreamCodeGenerator {
 
 	private final String className;
 
-	private final PrintStream out;
-
 	public JavaCodeGenerator(String className, OutputStream out) {
+		super(out);
 		this.className = className;
-		this.out = new PrintStream(out);
 	}
 
 	@Override
