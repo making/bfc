@@ -65,6 +65,14 @@ $ java Hello
 Hello World
 ```
 
+### Compiler to WASM
+
+```
+$ bfc examples/hello.bf -o hello.wasm
+$ wasmtime hello.wasm
+Hello World
+```
+
 ### Compiler to WAT
 
 ```
