@@ -40,14 +40,6 @@ public final class WasmWriter {
 		return this.write(result);
 	}
 
-	public WasmWriter writeLittleEndian2(int i) {
-		return this.write((Object) ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN).putShort((short) i).array());
-	}
-
-	public WasmWriter writeLittleEndian1(int i) {
-		return this.write((Object) ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN).put((byte) i).array());
-	}
-
 	public WasmWriter write(Object... objects) {
 		try {
 			for (Object o : objects) {
