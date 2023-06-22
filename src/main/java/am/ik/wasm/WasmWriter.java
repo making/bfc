@@ -23,7 +23,7 @@ public final class WasmWriter {
 		return this.write((Object) ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(i).array());
 	}
 
-	public WasmWriter writeSignedLeb12(int i) {
+	public WasmWriter writeSignedLeb128(int i) {
 		// https://en.wikipedia.org/wiki/LEB128#Encode_signed_32-bit_integer
 		int value = i;
 		value |= 0;
@@ -93,7 +93,7 @@ public final class WasmWriter {
 		final T def = defSupplier.get();
 		consumer.accept(def);
 		final byte[] bytes = def.toByteArray();
-		return this.write(section).writeSignedLeb12(bytes.length).write(bytes);
+		return this.write(section).writeSignedLeb128(bytes.length).write(bytes);
 	}
 
 	public WasmWriter writeTypeSection(Consumer<TypeDef> consumer) {

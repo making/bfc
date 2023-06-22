@@ -58,7 +58,7 @@ public class WasmCodeGenerator implements CodeGenerator {
 			// section "Global" (6)
 			.writeGlobal(globals -> globals.addGlobal(Type.I32, Mutability.VAR, instructions -> instructions //
 				.write(Instruction.I32_CONST)
-				.writeSignedLeb12(128)))
+				.writeSignedLeb128(128)))
 			// section "Export" (7)
 			.writeExport(exports -> exports //
 				.addExport("memory", ExternalKind.MEMORY, 0)
