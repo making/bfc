@@ -101,18 +101,19 @@ public class BfcCli {
 	}
 
 	public void help() {
-		this.err.println("""
-				Braininf*ck Compiler/Interpreter
+		this.err.println(
+				"""
+						Braininf*ck Compiler/Interpreter
 
-				bfc <input file> [options]
+						bfc <input file> [options]
 
-				---
-				Options:
-				-o:		output file name of the compilation (supported extensions: *.js, *.java, *.class, *.wat).
-						without this option bfc works as an interpreter.
-				-v, --version:	print version
-				-h, --help:	print this help
-				""");
+						---
+						Options:
+						-o:		output file name of the compilation (supported extensions: *.js, *.java, *.class, *.wat, *.wasm).
+								without this option bfc works as an interpreter.
+						-v, --version:	print version
+						-h, --help:	print this help
+						""");
 	}
 
 	public static void main(String[] args) throws Exception {
