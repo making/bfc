@@ -145,11 +145,26 @@ public class JvmByteCode6Generator implements CodeGenerator {
 				Opcode.ALOAD_1, // memory
 				Opcode.ILOAD_2, // pointer
 				Opcode.DUP2, //
-				Opcode.IALOAD, // memory[pointer]
-				Opcode.ICONST_1, // 1
+				Opcode.IALOAD // memory[pointer]
+		));
+		this.code.addAll(intToCode(Math.abs(expression.value())));
+		this.code.addAll(List.of( //
 				expression.value() > 0 ? Opcode.IADD /* + */ : Opcode.ISUB /* - */, //
 				Opcode.IASTORE //
 		));
+	}
+
+	static List<Integer> intToCode(int i) {
+		if (i < 6) {
+			return List.of(Opcode.ICONST_0 + i);
+		}
+		else if (i <= Byte.MAX_VALUE) {
+			return List.of(Opcode.BIPUSH, i);
+		}
+		else {
+			// TODO if greater than 2 bytes
+			return List.of(Opcode.SIPUSH, i);
+		}
 	}
 
 	@Override
@@ -157,8 +172,7 @@ public class JvmByteCode6Generator implements CodeGenerator {
 		this.code.addAll(List.of( //
 				Opcode.IINC, //
 				0x02, // pointer
-				expression.value() > 0 ? 0x01 /* 1 */ : 0xff /* -1 */ //
-		));
+				expression.value()));
 	}
 
 	private void writeBytes(byte[] bytes) {

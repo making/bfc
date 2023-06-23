@@ -116,10 +116,11 @@ public class WatCodeGenerator extends PrintStreamCodeGenerator {
 				    global.get 0
 				    global.get 0
 				    i32.load8_u
-				    i32.const 1
+				    i32.const %d
 				    i32.%s
 				    i32.store8
-				""", expression.value() > 0 ? "+" : "-", expression.value() > 0 ? "add" : "sub");
+				""", expression.value() > 0 ? "+" : "-", Math.abs(expression.value()),
+				expression.value() > 0 ? "add" : "sub");
 	}
 
 	@Override
@@ -127,10 +128,11 @@ public class WatCodeGenerator extends PrintStreamCodeGenerator {
 		this.out.printf("""
 				    ;; %s
 				    global.get 0
-				    i32.const 1
+				    i32.const %d
 				    i32.%s
 				    global.set 0
-				""", expression.value() > 0 ? ">" : "<", expression.value() > 0 ? "add" : "sub");
+				""", expression.value() > 0 ? ">" : "<", Math.abs(expression.value()),
+				expression.value() > 0 ? "add" : "sub");
 	}
 
 }

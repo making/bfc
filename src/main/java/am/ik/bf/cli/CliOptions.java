@@ -8,8 +8,8 @@ import java.util.Set;
 public class CliOptions {
 
 	private static final Set<String> noValueKeys = Set.of("-h", "--help", //
-			"-v", "--version" //
-	);
+			"-v", "--version", //
+			"--optimize");
 
 	private final Map<String, String> options;
 

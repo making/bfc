@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.function.IntConsumer;
 
 import am.ik.bf.BrainfuckCompiler;
@@ -16,6 +17,10 @@ import am.ik.bf.codegen.JavaScriptCodeGenerator;
 import am.ik.bf.codegen.JvmByteCode6Generator;
 import am.ik.bf.codegen.WasmCodeGenerator;
 import am.ik.bf.codegen.WatCodeGenerator;
+import am.ik.bf.expression.IncrementPointerExpression;
+import am.ik.bf.expression.IncrementValueExpression;
+import am.ik.bf.optimizer.CompositeOptimizer;
+import am.ik.bf.optimizer.PrecomputeIncrementOptimizer;
 
 public class BfcCli {
 
@@ -73,7 +78,14 @@ public class BfcCli {
 	private void compile(String code) throws IOException {
 		final Path output = Path.of(this.options.get("-o"));
 		final CodeGenerator codeGenerator = this.determineCodeGenerator(output);
-		final BrainfuckCompiler compiler = new BrainfuckCompiler(codeGenerator);
+		final boolean enableOptimizer = this.options.contains("--optimize");
+		final BrainfuckCompiler compiler = new BrainfuckCompiler(codeGenerator,
+				enableOptimizer ? new CompositeOptimizer(List.of(
+						new PrecomputeIncrementOptimizer<>(IncrementPointerExpression.class,
+								IncrementPointerExpression::new, IncrementPointerExpression::value),
+						new PrecomputeIncrementOptimizer<>(IncrementValueExpression.class,
+								IncrementValueExpression::new, IncrementValueExpression::value)))
+						: null);
 		compiler.compile(code);
 	}
 
@@ -111,6 +123,7 @@ public class BfcCli {
 						Options:
 						-o:		output file name of the compilation (supported extensions: *.js, *.java, *.class, *.wat, *.wasm).
 								without this option bfc works as an interpreter.
+						--optimize:	Enable optimizers for the compiler
 						-v, --version:	print version
 						-h, --help:	print this help
 						""");

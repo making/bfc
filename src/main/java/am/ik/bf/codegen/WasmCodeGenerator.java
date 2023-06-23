@@ -130,20 +130,22 @@ public class WasmCodeGenerator implements CodeGenerator {
 				Instruction.GET_GLOBAL, 0, // global.get 0
 				Instruction.GET_GLOBAL, 0, // global.get 0
 				Instruction.I32_LOAD8_U, 0, 0, // i32.load_u align=0 offset=0
-				Instruction.I32_CONST, 1, // i32.const 1
-				(expression.value() > 0 ? Instruction.I32_ADD : Instruction.I32_SUB), // i32.add-sub
-				Instruction.I32_STORE8, 0, 0 // i32.store8 align=0 offset=0
-		);
+				Instruction.I32_CONST)
+			.writeSignedLeb128(Math.abs(expression.value())) // i32.const n
+			.write(expression.value() > 0 ? Instruction.I32_ADD : Instruction.I32_SUB, // i32.add-sub
+					Instruction.I32_STORE8, 0, 0 // i32.store8 align=0 offset=0
+			);
 	}
 
 	@Override
 	public void generateIncrementPointerExpression(IncrementPointerExpression expression) {
 		this.codeWriter.write( //
 				Instruction.GET_GLOBAL, 0, // global.get 0
-				Instruction.I32_CONST, 1, // i32.const 1
-				(expression.value() > 0 ? Instruction.I32_ADD : Instruction.I32_SUB), // i32.add-sub
-				Instruction.SET_GLOBAL, 0 // global.set 0
-		);
+				Instruction.I32_CONST)
+			.writeSignedLeb128(Math.abs(expression.value())) // i32.const n
+			.write(expression.value() > 0 ? Instruction.I32_ADD : Instruction.I32_SUB, // i32.add-sub
+					Instruction.SET_GLOBAL, 0 // global.set 0
+			);
 	}
 
 }

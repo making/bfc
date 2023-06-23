@@ -9,12 +9,18 @@ public class BrainfuckCompiler {
 
 	private final CodeGenerator codeGenerator;
 
-	public BrainfuckCompiler(CodeGenerator codeGenerator) {
+	private final BrainfuckOptimizer optimizer;
+
+	public BrainfuckCompiler(CodeGenerator codeGenerator, BrainfuckOptimizer optimizer) {
 		this.codeGenerator = codeGenerator;
+		this.optimizer = optimizer;
 	}
 
 	public void compile(String code) {
-		final List<Statement> statements = BrainfuckParser.parse(code);
+		List<Statement> statements = BrainfuckParser.parse(code);
+		if (this.optimizer != null) {
+			statements = this.optimizer.optimize(statements);
+		}
 		this.codeGenerator.begin();
 		for (Statement statement : statements) {
 			statement.generate(this.codeGenerator);
