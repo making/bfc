@@ -4,6 +4,7 @@ import java.io.OutputStream;
 
 import am.ik.bf.expression.IncrementPointerExpression;
 import am.ik.bf.expression.IncrementValueExpression;
+import am.ik.bf.expression.ResetValueExpression;
 import am.ik.bf.statement.InputStatement;
 import am.ik.bf.statement.LoopStatement;
 import am.ik.bf.statement.OutputStatement;
@@ -133,6 +134,15 @@ public class WatCodeGenerator extends PrintStreamCodeGenerator {
 				    global.set 0
 				""", expression.value() > 0 ? ">" : "<", Math.abs(expression.value()),
 				expression.value() > 0 ? "add" : "sub");
+	}
+
+	@Override
+	public void generateSetValueToZeroExpression(ResetValueExpression expression) {
+		this.out.print("""
+				    global.get 0
+				    i32.const 0
+				    i32.store8
+				""");
 	}
 
 }

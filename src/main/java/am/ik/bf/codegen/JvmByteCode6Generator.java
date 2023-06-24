@@ -7,6 +7,7 @@ import java.util.List;
 
 import am.ik.bf.expression.IncrementPointerExpression;
 import am.ik.bf.expression.IncrementValueExpression;
+import am.ik.bf.expression.ResetValueExpression;
 import am.ik.bf.statement.InputStatement;
 import am.ik.bf.statement.LoopStatement;
 import am.ik.bf.statement.OutputStatement;
@@ -173,6 +174,14 @@ public class JvmByteCode6Generator implements CodeGenerator {
 				Opcode.IINC, //
 				0x02, // pointer
 				expression.value()));
+	}
+
+	@Override
+	public void generateSetValueToZeroExpression(ResetValueExpression expression) {
+		this.code.addAll(List.of( //
+				Opcode.ALOAD_1, // memory
+				Opcode.ILOAD_2, // pointer,
+				Opcode.IASTORE, Opcode.ICONST_0));
 	}
 
 	private void writeBytes(byte[] bytes) {

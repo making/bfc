@@ -21,6 +21,7 @@ import am.ik.bf.expression.IncrementPointerExpression;
 import am.ik.bf.expression.IncrementValueExpression;
 import am.ik.bf.optimizer.CompositeOptimizer;
 import am.ik.bf.optimizer.PrecomputeIncrementOptimizer;
+import am.ik.bf.optimizer.ResetValueOptimizer;
 
 public class BfcCli {
 
@@ -84,8 +85,8 @@ public class BfcCli {
 						new PrecomputeIncrementOptimizer<>(IncrementPointerExpression.class,
 								IncrementPointerExpression::new, IncrementPointerExpression::value),
 						new PrecomputeIncrementOptimizer<>(IncrementValueExpression.class,
-								IncrementValueExpression::new, IncrementValueExpression::value)))
-						: null);
+								IncrementValueExpression::new, IncrementValueExpression::value),
+						new ResetValueOptimizer())) : null);
 		compiler.compile(code);
 	}
 

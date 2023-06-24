@@ -5,6 +5,7 @@ import java.io.OutputStream;
 
 import am.ik.bf.expression.IncrementPointerExpression;
 import am.ik.bf.expression.IncrementValueExpression;
+import am.ik.bf.expression.ResetValueExpression;
 import am.ik.bf.statement.InputStatement;
 import am.ik.bf.statement.LoopStatement;
 import am.ik.bf.statement.OutputStatement;
@@ -146,6 +147,15 @@ public class WasmCodeGenerator implements CodeGenerator {
 			.write(expression.value() > 0 ? Instruction.I32_ADD : Instruction.I32_SUB, // i32.add-sub
 					Instruction.SET_GLOBAL, 0 // global.set 0
 			);
+	}
+
+	@Override
+	public void generateSetValueToZeroExpression(ResetValueExpression expression) {
+		this.codeWriter.write( //
+				Instruction.GET_GLOBAL, 0, // global.get 0
+				Instruction.I32_CONST, 0, // i32.const 0
+				Instruction.I32_STORE8, 0, 0 // i32.store8 align=0 offset=0
+		);
 	}
 
 }

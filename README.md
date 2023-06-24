@@ -63,6 +63,8 @@ Hello World
 
 ```
 $ bfc examples/hello.bf -o Hello.class
+$ file Hello.class                               
+Hello.class: compiled Java class data, version 50.0 (Java 1.6)
 $ java Hello
 Hello World
 ```
@@ -71,6 +73,8 @@ Hello World
 
 ```
 $ bfc examples/hello.bf -o hello.wasm
+$ file hello.wasm
+hello.wasm: WebAssembly (wasm) binary module version 0x1 (MVP)
 $ wasmtime hello.wasm
 Hello World
 ```

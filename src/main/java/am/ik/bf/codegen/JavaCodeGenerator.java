@@ -4,6 +4,7 @@ import java.io.OutputStream;
 
 import am.ik.bf.expression.IncrementPointerExpression;
 import am.ik.bf.expression.IncrementValueExpression;
+import am.ik.bf.expression.ResetValueExpression;
 import am.ik.bf.statement.InputStatement;
 import am.ik.bf.statement.LoopStatement;
 import am.ik.bf.statement.OutputStatement;
@@ -75,6 +76,13 @@ public class JavaCodeGenerator extends PrintStreamCodeGenerator {
 		this.out.printf("""
 						pointer += %d;
 				""", expression.value());
+	}
+
+	@Override
+	public void generateSetValueToZeroExpression(ResetValueExpression expression) {
+		this.out.print("""
+						memory[pointer] = 0;
+				""");
 	}
 
 }
