@@ -4,6 +4,16 @@ Braininf*ck Compiler/Interpreter
 
 ![bfc](https://github.com/making/bfc/assets/106908/a1c49eed-b6e8-4c15-8115-6d4812b69f49)
 
+## Install
+
+### Install via Homebrew (Mac / Linux)
+
+You can install native binary for Mac (only for Intel) or Linux via [Homebrew](https://brew.sh/).
+
+```
+brew install making/tap/bfc
+```
+
 ## How to build bfc
 
 ### Native Binary (GraalVM required)
