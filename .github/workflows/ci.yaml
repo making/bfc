@@ -65,13 +65,14 @@ jobs:
         native-image-job-reports: 'true'
     - name: Build bfc
       run: |
+        mkdir dist
         ./mvnw -V --no-transfer-progress package -Pnative
-        ${{ matrix.move }} target${{ matrix.separator }}bfc${{ matrix.extension }} bfc-${{ matrix.platform }}${{ matrix.extension }}
+        ${{ matrix.move }} target${{ matrix.separator }}bfc${{ matrix.extension }} dist${{ matrix.separator }}bfc-${{ matrix.platform }}${{ matrix.extension }}
     - name: Upload binary
       uses: actions/upload-artifact@v2
       with:
-        name: bfc-${{ matrix.os }}
-        path: target/bfc*
+        name: dist
+        path: dist
     - name: Revoke token
       if: always()
       run: |
