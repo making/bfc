@@ -51,6 +51,7 @@ jobs:
     - name: Build bfc
       run: |
         ./mvnw -V --no-transfer-progress package -Pnative
+        rm -f target/*.jar
     - name: Upload binary
       uses: actions/upload-artifact@v2
       with:
