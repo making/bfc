@@ -23,7 +23,22 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ macos-latest, windows-latest, ubuntu-latest ]
+        include:
+        - os: ubuntu-latest
+          platform: x86_64-pc-linux
+          move: mv
+          separator: /
+          extension: ""
+        - os: macos-latest
+          platform: x86_64-apple-darwin
+          move: mv
+          separator: /
+          extension: ""
+        - os: windows-latest
+          platform: x86_64-pc-win32
+          move: move
+          separator: \
+          extension: .exe
     permissions:
       id-token: write
       contents: read
@@ -51,7 +66,7 @@ jobs:
     - name: Build bfc
       run: |
         ./mvnw -V --no-transfer-progress package -Pnative
-        rm -f target/*.jar
+        ${{ matrix.move }} target${{ matrix.separator }}bfc${{ matrix.extension }} bfc-${{ matrix.platform }}${{ matrix.extension }}
     - name: Upload binary
       uses: actions/upload-artifact@v2
       with:
