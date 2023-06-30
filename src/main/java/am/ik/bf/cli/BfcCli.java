@@ -1,9 +1,12 @@
 package am.ik.bf.cli;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -60,9 +63,15 @@ public class BfcCli {
 			this.exiter.accept(1);
 			return;
 		}
-		final Path input = Path.of(this.options.getNokey());
+
 		try {
-			final String code = Files.readString(input).trim();
+			String code;
+			if ("-".equals(this.options.getNokey())) {
+				code = copyToString(System.in);
+			}
+			else {
+				code = Files.readString(Path.of(this.options.getNokey())).trim();
+			}
 
 			if (this.options.contains("-o")) {
 				this.compile(code);
@@ -118,7 +127,7 @@ public class BfcCli {
 				"""
 						Braininf*ck Compiler/Interpreter
 
-						bfc <input file> [options]
+						bfc <input file or '-' as stdin> [options]
 
 						---
 						Options:
@@ -140,6 +149,20 @@ public class BfcCli {
 			System.err.println(e.getMessage());
 			cli.help();
 		}
+	}
+
+	public static String copyToString(InputStream in) throws IOException {
+		if (in == null) {
+			return "";
+		}
+		final StringBuilder out = new StringBuilder();
+		final InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
+		final char[] buffer = new char[5120];
+		int charsRead;
+		while ((charsRead = reader.read(buffer)) != -1) {
+			out.append(buffer, 0, charsRead);
+		}
+		return out.toString();
 	}
 
 }

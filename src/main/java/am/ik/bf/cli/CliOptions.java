@@ -44,7 +44,7 @@ public class CliOptions {
 		String key = null;
 		for (String arg : args) {
 			if (key == null) {
-				if (!arg.startsWith("-")) {
+				if (arg.equals("-") || !arg.startsWith("-")) {
 					options.put(NOKEY, arg);
 				}
 				else {
