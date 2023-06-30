@@ -19,7 +19,11 @@ on:
     - .github/workflows/ci.yaml
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-latest, windows-latest, ubuntu-latest ]
     permissions:
       id-token: write
       contents: read
@@ -39,64 +43,19 @@ jobs:
           kv/data/cicd/sonatype password | SONATYPE_PASSWORD ;
           kv/data/cicd/gpg secring | GPG_SECRING ;
           kv/data/cicd/gpg passphrase | GPG_PASSPHRASE ;
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
+    - uses: graalvm/setup-graalvm@v1
       with:
-        java-version: '17'
-        distribution: 'liberica'
-        cache: maven
-        gpg-private-key: ${{ steps.secrets.outputs.GPG_SECRING }}
-        gpg-passphrase: ${{ steps.secrets.outputs.GPG_PASSPHRASE }}
-    - name: Unit Tests
-      run: ./mvnw -V --no-transfer-progress clean test
-    - name: Deploy to sonatype-snapshots
-      if: github.ref == 'refs/heads/develop'
+        java-version: '17.0.7'
+        distribution: 'graalvm'
+        native-image-job-reports: 'true'
+    - name: Build bfc
       run: |
-        set -e
-        cat > settings.xml <<EOF
-        <settings>
-          <servers>
-            <server>
-               <id>sonatype-snapshots</id>
-               <username>${SONATYPE_USERNAME}</username>
-               <password>${SONATYPE_PASSWORD}</password>
-            </server>
-          </servers>
-        </settings>
-        EOF
-        CURRENT_VERSION=$(grep '<version>' pom.xml | head -n 1 | sed -e 's|<version>||g' -e 's|</version>||g' -e 's| ||g' |  tr -d '\t')
-        if [ "${CURRENT_VERSION}" = "$(echo ${CURRENT_VERSION} | grep "\-SNAPSHOT")" ];then
-          ./mvnw -V deploy -s settings.xml --no-transfer-progress -DskipTests=true -DserverId=sonatype-snapshots
-        fi
-    - name: Deploy to sonatype-releases
-      if: github.ref == 'refs/heads/main'
-      run: |
-        set -e
-        cat > settings.xml <<EOF
-        <settings>
-          <servers>
-            <server>
-               <id>repo</id>
-               <username>${SONATYPE_USERNAME}</username>
-               <password>${SONATYPE_PASSWORD}</password>
-            </server>
-          </servers>
-        </settings>
-        EOF
-        mvn -V \
-            javadoc:jar \
-            source:jar \
-            package \
-            org.apache.maven.plugins:maven-gpg-plugin:3.0.1:sign \
-            org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:deploy \
-            --no-transfer-progress \
-            -s settings.xml \
-            -DserverId=repo \
-            -Dgpg.passphrase=${GPG_PASSPHRASE} \
-            -DnexusUrl=https://oss.sonatype.org \
-            -DautoReleaseAfterClose=true \
-            -DaltDeploymentRepository=repo::default::https://oss.sonatype.org/service/local/staging/deploy/maven2 \
-            -DskipTests=true
+        ./mvnw -V --no-transfer-progress package -Pnative
+    - name: Upload binary
+      uses: actions/upload-artifact@v2
+      with:
+        name: bfc-${{ matrix.os }}
+        path: target/bfc*
     - name: Revoke token
       if: always()
       run: |
