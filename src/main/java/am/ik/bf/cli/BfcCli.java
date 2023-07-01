@@ -14,6 +14,7 @@ import java.util.function.IntConsumer;
 
 import am.ik.bf.BrainfuckCompiler;
 import am.ik.bf.BrainfuckInterpreter;
+import am.ik.bf.BrainfuckOptimizer;
 import am.ik.bf.codegen.CodeGenerator;
 import am.ik.bf.codegen.JavaCodeGenerator;
 import am.ik.bf.codegen.JavaScriptCodeGenerator;
@@ -50,7 +51,7 @@ public class BfcCli {
 			return;
 		}
 		if (this.options.contains("-v") || this.options.contains("--version")) {
-			this.out.println("DEV");
+			this.out.println(Version.getVersionAsJson());
 			return;
 		}
 		if (this.options.contains("-h") || this.options.contains("--help")) {
@@ -88,20 +89,23 @@ public class BfcCli {
 	private void compile(String code) throws IOException {
 		final Path output = Path.of(this.options.get("-o"));
 		final CodeGenerator codeGenerator = this.determineCodeGenerator(output);
-		final boolean enableOptimizer = this.options.contains("--optimize");
-		final BrainfuckCompiler compiler = new BrainfuckCompiler(codeGenerator,
-				enableOptimizer ? new CompositeOptimizer(List.of(
-						new PrecomputeIncrementOptimizer<>(IncrementPointerExpression.class,
-								IncrementPointerExpression::new, IncrementPointerExpression::value),
-						new PrecomputeIncrementOptimizer<>(IncrementValueExpression.class,
-								IncrementValueExpression::new, IncrementValueExpression::value),
-						new ResetValueOptimizer())) : null);
+		final BrainfuckCompiler compiler = new BrainfuckCompiler(codeGenerator, buildOptimizer());
 		compiler.compile(code);
 	}
 
 	private void interpret(String code) {
-		final BrainfuckInterpreter interpreter = new BrainfuckInterpreter(System.in, System.out);
+		final BrainfuckInterpreter interpreter = new BrainfuckInterpreter(System.in, System.out, buildOptimizer());
 		interpreter.interpret(code);
+	}
+
+	private BrainfuckOptimizer buildOptimizer() {
+		final boolean enableOptimizer = this.options.contains("--optimize");
+		return enableOptimizer ? new CompositeOptimizer(List.of(
+				new PrecomputeIncrementOptimizer<>(IncrementPointerExpression.class, IncrementPointerExpression::new,
+						IncrementPointerExpression::value),
+				new PrecomputeIncrementOptimizer<>(IncrementValueExpression.class, IncrementValueExpression::new,
+						IncrementValueExpression::value),
+				new ResetValueOptimizer())) : null;
 	}
 
 	private CodeGenerator determineCodeGenerator(Path output) throws IOException {
@@ -133,7 +137,7 @@ public class BfcCli {
 						Options:
 						-o:		output file name of the compilation (supported extensions: *.js, *.java, *.class, *.wat, *.wasm).
 								without this option bfc works as an interpreter.
-						--optimize:	Enable optimizers for the compiler
+						--optimize:	Enable optimizers
 						-v, --version:	print version
 						-h, --help:	print this help
 						""");

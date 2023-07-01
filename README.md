@@ -27,13 +27,13 @@ install target/bfc /usr/local/bin/
 $ bfc -h
 Braininf*ck Compiler/Interpreter
 
-bfc <input file> [options]
+bfc <input file or '-' as stdin> [options]
 
 ---
 Options:
 -o:             output file name of the compilation (supported extensions: *.js, *.java, *.class, *.wat, *.wasm).
                 without this option bfc works as an interpreter.
---optimize:     Enable optimizers for the compiler
+--optimize:     Enable optimizers
 -v, --version:  print version
 -h, --help:     print this help
 ```
@@ -48,13 +48,13 @@ Options:
 $ java -jar target/bfc-0.1.0-SNAPSHOT.jar -h
 Braininf*ck Compiler/Interpreter
 
-bfc <input file> [options]
+bfc <input file or '-' as stdin> [options]
 
 ---
 Options:
 -o:             output file name of the compilation (supported extensions: *.js, *.java, *.class, *.wat, *.wasm).
                 without this option bfc works as an interpreter.
---optimize:     Enable optimizers for the compiler
+--optimize:     Enable optimizers
 -v, --version:  print version
 -h, --help:     print this help
 ```

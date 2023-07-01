@@ -18,22 +18,32 @@ public final class BrainfuckInterpreter implements Evaluator {
 
 	private final PrintStream out;
 
-	public BrainfuckInterpreter(InputStream in, PrintStream out, int memorySize) {
+	private final BrainfuckOptimizer optimizer;
+
+	public BrainfuckInterpreter(InputStream in, PrintStream out, BrainfuckOptimizer optimizer, int memorySize) {
 		this.in = in;
 		this.out = out;
+		this.optimizer = optimizer;
 		this.memory = new int[memorySize];
 	}
 
+	public BrainfuckInterpreter(InputStream in, PrintStream out, BrainfuckOptimizer optimizer) {
+		this(in, out, optimizer, 10240);
+	}
+
 	public BrainfuckInterpreter(InputStream in, PrintStream out) {
-		this(in, out, 10240);
+		this(in, out, null);
 	}
 
 	public BrainfuckInterpreter() {
-		this(System.in, System.out);
+		this(System.in, System.out, null);
 	}
 
 	public void interpret(String code) {
-		final List<Statement> statements = BrainfuckParser.parse(code);
+		List<Statement> statements = BrainfuckParser.parse(code);
+		if (this.optimizer != null) {
+			statements = this.optimizer.optimize(statements);
+		}
 		this.interpret(statements);
 	}
 
