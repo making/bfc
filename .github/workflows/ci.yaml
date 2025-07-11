@@ -67,5 +67,5 @@ jobs:
     - name: Upload binary
       uses: actions/upload-artifact@v4
       with:
-        name: bfc-${{ matrix.platform }}
+        name: bfc-${{ matrix.platform }}${{ matrix.extension }}
         path: dist${{ matrix.separator }}bfc-${{ matrix.platform }}${{ matrix.extension }}
