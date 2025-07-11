@@ -29,8 +29,18 @@ jobs:
           move: mv
           separator: /
           extension: ""
-        - os: macos-latest
+        - os: ubuntu-24.04-arm
+          platform: aarch64-pc-linux
+          move: mv
+          separator: /
+          extension: ""
+        - os: macos-13
           platform: x86_64-apple-darwin
+          move: mv
+          separator: /
+          extension: ""
+        - os: macos-latest
+          platform: aarch64-apple-darwin
           move: mv
           separator: /
           extension: ""
@@ -44,20 +54,6 @@ jobs:
       contents: read
     steps:
     - uses: actions/checkout@v3
-    - name: Import Secrets
-      id: secrets
-      uses: hashicorp/vault-action@v2.5.0
-      with:
-        exportToken: true
-        exportEnv: true
-        method: jwt
-        url: ${{ secrets.VAULT_ADDR }}
-        role: cicd
-        secrets: |
-          kv/data/cicd/sonatype username | SONATYPE_USERNAME ;
-          kv/data/cicd/sonatype password | SONATYPE_PASSWORD ;
-          kv/data/cicd/gpg secring | GPG_SECRING ;
-          kv/data/cicd/gpg passphrase | GPG_PASSPHRASE ;
     - uses: graalvm/setup-graalvm@v1
       with:
         java-version: '17.0.7'
@@ -69,11 +65,7 @@ jobs:
         ./mvnw -V --no-transfer-progress package -Pnative
         ${{ matrix.move }} target${{ matrix.separator }}bfc${{ matrix.extension }} dist${{ matrix.separator }}bfc-${{ matrix.platform }}${{ matrix.extension }}
     - name: Upload binary
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: dist
         path: dist
-    - name: Revoke token
-      if: always()
-      run: |
-        curl -X POST -s -H "X-Vault-Token: ${VAULT_TOKEN}" ${{ secrets.VAULT_ADDR }}/v1/auth/token/revoke-self
